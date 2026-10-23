@@ -1,17 +1,18 @@
 
 @SmartShopAI_HostAddress = https://localhost:7126
 
-### Test danh sách sản phẩm
+### 1. Test danh sách sản phẩm
 GET {{SmartShopAI_HostAddress}}/api/test/products
 Accept: application/json
 
-### Test Gemini - Generate Product Description
+
+### 2. Test Gemini - Generate Product Description
 # @timeout 120000
 POST {{SmartShopAI_HostAddress}}/api/products/1/generatedescription
 Accept: application/json
 
 
-### Test Gemini - Analyze Review
+### 3. Test Gemini - Analyze Review
 # @timeout 120000
 POST {{SmartShopAI_HostAddress}}/api/reviews/analyze
 Accept: application/json
@@ -25,7 +26,7 @@ Content-Type: application/json
 }
 
 
-### Test AI Assistant Chat
+### 4. Test AI Assistant Chat
 # @timeout 120000
 POST {{SmartShopAI_HostAddress}}/api/assistant/chat
 Accept: application/json
@@ -37,8 +38,7 @@ Content-Type: application/json
 }
 
 
-### Test Review Statistics Report
+### 5. Test Review Statistics Report
+# @timeout 120000
 GET {{SmartShopAI_HostAddress}}/api/reports/reviews
 Accept: application/json
-
-
