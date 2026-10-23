@@ -1,0 +1,576 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f3f6fc">
+    <title>SmartShopAI - AI Shopping Assistant</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f3f6fc;
+            --surface: #fff;
+            --ink: #102343;
+            --muted: #657b9b;
+            --blue: #3458d4;
+            --line: #e1e8f3;
+            --soft: #eef3ff;
+            --green: #13875e;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font: 15px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+        }
+
+        button, input {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+            button:disabled {
+                cursor: not-allowed;
+                opacity: .65;
+            }
+
+        .page {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 35px 24px 48px;
+        }
+
+        .top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .eyebrow {
+            color: var(--blue);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .17em;
+        }
+
+        h1 {
+            font-size: clamp(28px,3vw,39px);
+            line-height: 1.2;
+            letter-spacing: -.04em;
+            margin: 7px 0 6px;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+            .nav a {
+                text-decoration: none;
+                color: var(--blue);
+                background: white;
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                padding: 10px 15px;
+                font-weight: 700;
+                white-space: nowrap;
+            }
+
+                .nav a:hover {
+                    background: var(--soft);
+                }
+
+        .shell {
+            display: grid;
+            grid-template-columns: minmax(0,1fr) 300px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .chat-card, .side-card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 19px;
+            box-shadow: 0 12px 30px rgba(23,47,90,.045);
+        }
+
+        .chat-card {
+            overflow: hidden;
+        }
+
+        .chat-head {
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .assistant-name {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            display: grid;
+            place-items: center;
+            width: 43px;
+            height: 43px;
+            border-radius: 13px;
+            background: var(--soft);
+            font-size: 23px;
+        }
+
+        .assistant-name strong {
+            display: block;
+            font-size: 17px;
+        }
+
+        .online {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .dot {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            background: var(--green);
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        .reset {
+            background: white;
+            border: 1px solid var(--line);
+            color: var(--ink);
+            border-radius: 10px;
+            padding: 9px 13px;
+            font-weight: 650;
+        }
+
+            .reset:hover {
+                background: var(--soft);
+            }
+
+        .messages {
+            height: min(56vh,560px);
+            min-height: 360px;
+            overflow-y: auto;
+            padding: 25px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 17px;
+            background: linear-gradient(#fff,#fcfdff);
+        }
+
+        .message {
+            max-width: min(82%,670px);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+            .message.user {
+                align-self: flex-end;
+            }
+
+            .message.bot {
+                align-self: flex-start;
+            }
+
+        .bubble {
+            padding: 13px 16px;
+            border-radius: 15px;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .user .bubble {
+            background: var(--blue);
+            color: #fff;
+            border-bottom-right-radius: 5px;
+        }
+
+        .bot .bubble {
+            background: #f0f4fb;
+            color: var(--ink);
+            border-bottom-left-radius: 5px;
+        }
+
+        .meta {
+            font-size: 11px;
+            color: var(--muted);
+            padding: 0 4px;
+        }
+
+        .user .meta {
+            text-align: right;
+        }
+
+        .composer {
+            border-top: 1px solid var(--line);
+            padding: 16px 20px 18px;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #messageInput {
+            flex: 1;
+            min-width: 0;
+            padding: 13px 15px;
+            border: 1px solid #d4dfef;
+            border-radius: 12px;
+            outline: none;
+            background: #fff;
+        }
+
+            #messageInput:focus {
+                border-color: var(--blue);
+                box-shadow: 0 0 0 3px #3458d41c;
+            }
+
+        #sendBtn {
+            padding: 13px 20px;
+            background: var(--blue);
+            border: 0;
+            border-radius: 12px;
+            color: white;
+            font-weight: 750;
+        }
+
+            #sendBtn:hover:not(:disabled) {
+                background: #2446bd;
+            }
+
+        .helper {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 9px;
+        }
+
+        #status {
+            min-height: 19px;
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+            #status.error {
+                color: #b82c42;
+            }
+
+        .side-card {
+            padding: 22px;
+            margin-bottom: 18px;
+        }
+
+            .side-card h2 {
+                font-size: 17px;
+                margin: 0 0 7px;
+            }
+
+            .side-card p {
+                color: var(--muted);
+                font-size: 13px;
+                margin: 0 0 16px;
+            }
+
+        .suggestion {
+            width: 100%;
+            text-align: left;
+            background: #f8faff;
+            color: var(--ink);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 11px 13px;
+            margin: 0 0 9px;
+        }
+
+            .suggestion:hover:not(:disabled) {
+                background: var(--soft);
+                border-color: #b9cafa;
+            }
+
+        .session {
+            background: #f5f8fe;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 10px;
+            font: 12px/1.5 ui-monospace,Consolas,monospace;
+            color: #465a7b;
+            overflow-wrap: anywhere;
+        }
+
+        .note {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 10px;
+        }
+
+        footer {
+            color: var(--muted);
+            font-size: 12px;
+            text-align: center;
+            padding-top: 22px;
+        }
+
+        @media(max-width:880px) {
+            .shell {
+                grid-template-columns: 1fr;
+            }
+
+            .side {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+            }
+
+            .side-card {
+                margin: 0;
+            }
+        }
+
+        @media(max-width:600px) {
+            .page {
+                padding: 20px 12px 30px;
+            }
+
+            .top {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .chat-head {
+                padding: 14px;
+            }
+
+            .messages {
+                min-height: 350px;
+                height: 53vh;
+                padding: 17px 13px;
+            }
+
+            .message {
+                max-width: 91%;
+            }
+
+            .composer {
+                padding: 13px;
+            }
+
+            .side {
+                grid-template-columns: 1fr;
+            }
+
+            #sendBtn {
+                padding: 13px 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <header class="top">
+            <div>
+                <div class="eyebrow">AI-POWERED SMART SHOPPING</div>
+                <h1>SmartShopAI Assistant</h1>
+                <p class="subtitle">Ask about products, prices and features — powered by Gemini AI.</p>
+            </div>
+            <nav class="nav" aria-label="Page navigation">
+                <a href="/reports.html">← Review Analytics</a>
+            </nav>
+        </header>
+
+        <div class="shell">
+            <section class="chat-card" aria-label="Shopping assistant conversation">
+                <div class="chat-head">
+                    <div class="assistant-name">
+                        <div class="avatar" aria-hidden="true">✦</div>
+                        <div><strong>Shopping Assistant</strong><div class="online"><span class="dot"></span>Ready to help</div></div>
+                    </div>
+                    <button type="button" class="reset" id="resetBtn" title="Start a new chat session">↻ New chat</button>
+                </div>
+
+                <div class="messages" id="messages" role="log" aria-live="polite" aria-relevant="additions text"></div>
+
+                <form class="composer" id="chatForm">
+                    <div class="form-row">
+                        <input id="messageInput" type="text" maxlength="2000" autocomplete="off" placeholder="Ask about a product or price..." aria-label="Your question" required>
+                        <button id="sendBtn" type="submit">Send →</button>
+                    </div>
+                    <div class="helper">Your questions are answered using the products available in SmartShopAI.</div>
+                    <div id="status" role="status" aria-live="polite"></div>
+                </form>
+            </section>
+
+            <aside class="side">
+                <section class="side-card">
+                    <h2>Try asking</h2>
+                    <p>Choose a question to start or continue your conversation.</p>
+                    <button class="suggestion" type="button" data-question="Which phone has the highest megapixel camera?">📷 Which phone has the highest megapixel camera?</button>
+                    <button class="suggestion" type="button" data-question="How much does that phone cost?">💰 How much does that phone cost?</button>
+                    <button class="suggestion" type="button" data-question="Which laptops are available?">💻 Which laptops are available?</button>
+                    <button class="suggestion" type="button" data-question="Compare the phones in the store.">⚖️ Compare the phones in the store.</button>
+                </section>
+                <section class="side-card">
+                    <h2>Conversation session</h2>
+                    <p>Follow-up questions share the same session ID, so the assistant can use recent conversation history.</p>
+                    <div class="session" id="sessionDisplay"></div>
+                    <div class="note">Chat bubbles are stored only in this browser tab. The API keeps recent conversation context in server memory for up to 30 minutes of inactivity. Restarting the server clears that context.</div>
+                </section>
+            </aside>
+        </div>
+        <footer>SmartShopAI · AI responses can be imperfect. Check product specifications before purchasing.</footer>
+    </main>
+
+    <script>(() => {
+      'use strict';
+      const API_URL = '/api/assistant/chat';
+      const SESSION_KEY = 'smartshopai.chat.session';
+      const MESSAGES_KEY = 'smartshopai.chat.messages';
+      const messagesEl = document.getElementById('messages');
+      const form = document.getElementById('chatForm');
+      const input = document.getElementById('messageInput');
+      const sendBtn = document.getElementById('sendBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      const statusEl = document.getElementById('status');
+      const sessionDisplay = document.getElementById('sessionDisplay');
+      const suggestionButtons = Array.from(document.querySelectorAll('[data-question]'));
+      let busy = false;
+      let sessionId = sessionStorage.getItem(SESSION_KEY);
+      if (!sessionId) {
+        sessionId = newSessionId();
+        sessionStorage.setItem(SESSION_KEY, sessionId);
+      }
+
+      function newSessionId() {
+        if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+          return 'shop-' + window.crypto.randomUUID();
+        }
+        return 'shop-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+      }
+
+      function updateSessionLabel() { sessionDisplay.textContent = sessionId; }
+      function setStatus(message, isError = false) {
+        statusEl.textContent = message;
+        statusEl.classList.toggle('error', isError);
+      }
+      function appendMessage(role, content, persist = true) {
+        const item = document.createElement('div');
+        item.className = 'message ' + (role === 'user' ? 'user' : 'bot');
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        bubble.textContent = content; // No HTML injection from AI responses.
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.textContent = role === 'user' ? 'You' : 'SmartShopAI Assistant';
+        item.append(bubble, meta);
+        messagesEl.appendChild(item);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+        if (persist) {
+          try {
+            const current = JSON.parse(sessionStorage.getItem(MESSAGES_KEY) || '[]');
+            current.push({ role, content });
+            sessionStorage.setItem(MESSAGES_KEY, JSON.stringify(current.slice(-30)));
+          } catch (_) { /* Chat still works if browser storage is full. */ }
+        }
+      }
+      function setBusy(value) {
+        busy = value;
+        sendBtn.disabled = value;
+        input.disabled = value;
+        resetBtn.disabled = value;
+        suggestionButtons.forEach(button => { button.disabled = value; });
+        sendBtn.textContent = value ? 'Thinking…' : 'Send →';
+      }
+      async function sendMessage(message) {
+        const text = String(message || '').trim();
+        if (!text || busy) return;
+        if (text.length > 2000) { setStatus('Please keep your question under 2,000 characters.', true); return; }
+        appendMessage('user', text);
+        input.value = '';
+        setBusy(true);
+        setStatus('Gemini is preparing an answer. This may take a moment…');
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 125000);
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ sessionId, message: text }),
+            signal: controller.signal
+          });
+          let result;
+          try { result = await response.json(); } catch (_) { result = null; }
+          if (!response.ok) {
+            const detail = result && (result.message || result.title);
+            throw new Error(detail || ('API request failed (HTTP ' + response.status + ').'));
+          }
+          if (!result || typeof result.answer !== 'string' || !result.answer.trim()) {
+            throw new Error('The assistant returned an empty or invalid answer.');
+          }
+          appendMessage('bot', result.answer);
+          setStatus('Response received. You can ask a follow-up question.');
+        } catch (error) {
+          const detail = error.name === 'AbortError'
+            ? 'The request timed out. Please try again.'
+            : (error.message || 'Cannot reach the assistant.');
+          setStatus(detail, true);
+          appendMessage('bot', 'Sorry, I could not answer this time. ' + detail);
+        } finally {
+          clearTimeout(timer);
+          setBusy(false);
+          input.focus();
+        }
+      }
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        sendMessage(input.value);
+      });
+      suggestionButtons.forEach(button => button.addEventListener('click', () => sendMessage(button.dataset.question)));
+      resetBtn.addEventListener('click', () => {
+        if (busy) return;
+        sessionId = newSessionId();
+        sessionStorage.setItem(SESSION_KEY, sessionId);
+        sessionStorage.removeItem(MESSAGES_KEY);
+        messagesEl.replaceChildren();
+        updateSessionLabel();
+        appendMessage('bot', 'Hello! I’m your SmartShopAI shopping assistant. What would you like to know about our products?', false);
+        setStatus('New conversation started.');
+        input.focus();
+      });
+      updateSessionLabel();
+      let saved = [];
+      try { saved = JSON.parse(sessionStorage.getItem(MESSAGES_KEY) || '[]'); } catch (_) {}
+      if (Array.isArray(saved) && saved.length) {
+        saved.filter(item => item && (item.role === 'user' || item.role === 'bot') && typeof item.content === 'string')
+          .forEach(item => appendMessage(item.role, item.content, false));
+      } else {
+        appendMessage('bot', 'Hello! I’m your SmartShopAI shopping assistant. Ask me about the products in our store, or choose a suggested question to get started.', false);
+      }
+    })();</script>
+</body>
+</html>

@@ -1,296 +1,106 @@
+# SmartShopAI
 
+## 1. Introduction
 
-\# SmartShopAI - AI-Powered Smart Shopping System
+SmartShopAI is a simple shopping application developed using ASP.NET Core Web API and Google Gemini AI.
 
+The application helps users generate product descriptions, analyze customer reviews, and ask questions about products.
 
+## 2. Technologies Used
 
-\## 1. Project Overview
+- C# and ASP.NET Core Web API (.NET 10)
+- Entity Framework Core
+- SQL Server
+- Google Gemini AI
+- HTML, CSS, JavaScript
+- Visual Studio 2026
 
+## 3. Main Features
 
+**1. Generate Product Description**
 
-SmartShopAI is an ASP.NET Core Web API application
+- Use Gemini AI to generate a product description of about 80 words.
+- Save the description to the database.
 
-integrating Google Gemini AI to support product
+**2. Analyze Customer Reviews**
 
-description generation, customer review sentiment
+- Analyze customer reviews using Gemini AI.
+- Classify reviews as Positive, Negative, or Neutral.
+- Save sentiment, score, and summary to SQL Server.
 
-analysis, and AI-powered shopping assistance.
+**3. AI Shopping Assistant**
 
+- Answer customer questions about products.
+- Remember previous questions using a session ID.
+- Provide a simple chat interface.
 
+**4. Review Reports**
 
-\## 2. Technologies
+- Show total reviews and average ratings.
+- Count positive, negative, and neutral reviews.
+- Display product statistics on a dashboard.
 
+## 4. Database
 
-
-\- C# / ASP.NET Core Web API (.NET 10)
-
-\- Entity Framework Core
-
-\- Microsoft SQL Server
-
-\- Google Gemini API
-
-\- RESTful API
-
-\- HTML, CSS, JavaScript
-
-\- Visual Studio 2026
-
-
-
-\## 3. Main Features
-
-
-
-\### Product Management
-
-\- Retrieve products from SQL Server
-
-\- View product information
-
-
-
-\### AI Product Description
-
-\- Generate product descriptions using Gemini AI
-
-\- Save generated descriptions to the database
-
-
-
-\### AI Review Analysis
-
-\- Analyze customer review sentiment
-
-\- Classify reviews as Positive, Neutral, or Negative
-
-\- Store AI analysis results
-
-
-
-\### AI Shopping Assistant
-
-\- Accept customer questions
-
-\- Generate AI-powered shopping responses
-
-
-
-\### Review Analytics
-
-\- Calculate average product ratings
-
-\- Count positive, neutral, and negative reviews
-
-\- Display product review statistics
-
-
-
-\## 4. Project Structure
-
-
-
-SmartShopAI/
-
-\- Controllers/
-
-\- Data/
-
-\- DTOs/
-
-\- Models/
-
-\- Services/
-
-\- wwwroot/
-
-\- Program.cs
-
-\- appsettings.json
-
-\- SmartShopAI.http
-
-
-
-\## 5. Database
-
-
-
-Database: SMARTSHOP
-
-
+Database name: `SMARTSHOP`
 
 Main tables:
+- Product
+- Review
 
-\- Product
+The application uses Entity Framework Core to connect to SQL Server.
 
-\- Review
+## 5. How to Run
 
+1. Open the project in Visual Studio.
+2. Configure the SQL Server connection string.
+3. Add the Gemini API Key using .NET User Secrets.
+4. Build and run the project.
 
+## 6. API Endpoints
 
-Database access is implemented using
+| Method | API | Description |
+|---|---|---|
+| GET | `/api/test/products` | Get products |
+| POST | `/api/products/{id}/generatedescription` | Generate product description |
+| POST | `/api/reviews/analyze` | Analyze customer review |
+| POST | `/api/assistant/chat` | Chat with AI |
+| GET | `/api/reports/reviews` | Get review statistics |
 
-Entity Framework Core and SQL Server.
+## 7. Web Pages
 
+**Review Dashboard:**
 
+`https://localhost:7126/reports.html`
 
-\## 6. Configuration
+This page shows product reviews, average ratings, and sentiment statistics.
 
+**AI Shopping Assistant:**
 
+`https://localhost:7126/chat.html`
 
-The application requires:
+This page allows users to chat with Gemini AI about products.
 
+## 8. Gemini AI Prompts
 
+**Product Description:**
 
-\- .NET 10 SDK
+Gemini acts as a marketing copywriter and creates an attractive product description of about 80 words.
 
-\- SQL Server
+**Review Analysis:**
 
-\- A valid Google Gemini API key
+Gemini analyzes customer reviews and returns JSON containing sentiment, score, and summary.
 
+**Shopping Assistant:**
 
+Gemini answers customer questions using product information from the database and conversation history.
 
-Configure the SQL Server connection string
+## 9. Notes
 
-in appsettings.json or user secrets.
+- A valid Gemini API Key is required.
+- Do not upload API Keys or passwords to GitHub.
+- Gemini responses may take some time depending on the API service.
 
+## 10. Author
 
-
-Configure the Gemini API key using
-
-.NET User Secrets:
-
-
-
-dotnet user-secrets set "Gemini:ApiKey" "YOUR\_API\_KEY"
-
-
-
-Configure a Gemini model that is available
-
-to your Google AI Studio account:
-
-
-
-dotnet user-secrets set "Gemini:Model" "YOUR\_MODEL\_ID"
-
-
-
-Do not commit API keys or passwords to GitHub.
-
-
-
-\## 7. How to Run
-
-
-
-1\. Clone the repository.
-
-2\. Open SmartShopAI.sln or the solution file
-
-&#x20;  in Visual Studio.
-
-3\. Restore NuGet packages.
-
-4\. Configure SQL Server and Gemini API credentials.
-
-5\. Build the solution.
-
-6\. Run the application using HTTPS.
-
-
-
-\## 8. API Endpoints
-
-
-
-| Method | Endpoint | Description |
-
-|--------|----------|-------------|
-
-| GET | /api/test/products | Get products |
-
-| POST | /api/products/1/generatedescription | Generate AI product description |
-
-| POST | /api/reviews/analyze | Analyze customer review |
-
-| POST | /api/assistant/chat | AI shopping assistant |
-
-| GET | /api/reports/reviews | Product review analytics |
-
-
-
-\## 9. Sample Requests
-
-
-
-\### Analyze Review
-
-
-
-POST /api/reviews/analyze
-
-
-
-{
-
-&#x20; "productId": 1,
-
-&#x20; "customerName": "Nguyen Van A",
-
-&#x20; "content": "Excellent camera and performance",
-
-&#x20; "rating": 5
-
-}
-
-
-
-\### AI Assistant
-
-
-
-POST /api/assistant/chat
-
-
-
-{
-
-&#x20; "sessionId": "session001",
-
-&#x20; "message": "Which phone has the best camera?"
-
-}
-
-
-
-\## 10. Notes
-
-
-
-\- AI features require an active Gemini API key.
-
-\- Gemini responses depend on model availability.
-
-\- Some API calls may fail temporarily due to
-
-&#x20; external service limits or high demand.
-
-\- SQL Server must be configured before running.
-
-
-
-\## 11. Author
-
-
-
-SmartShopAI - ASP.NET Core and Gemini AI Project
-
-
-
-Academic project for learning AI integration
-
-with Web API and SQL Server.
-
-
-
+SmartShopAI - ASP.NET Core and Gemini AI Practical Exam Project.
