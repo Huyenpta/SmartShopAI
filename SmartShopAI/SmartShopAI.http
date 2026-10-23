@@ -1,0 +1,44 @@
+
+@SmartShopAI_HostAddress = https://localhost:7126
+
+### Test danh sách sản phẩm
+GET {{SmartShopAI_HostAddress}}/api/test/products
+Accept: application/json
+
+### Test Gemini - Generate Product Description
+# @timeout 120000
+POST {{SmartShopAI_HostAddress}}/api/products/1/generatedescription
+Accept: application/json
+
+
+### Test Gemini - Analyze Review
+# @timeout 120000
+POST {{SmartShopAI_HostAddress}}/api/reviews/analyze
+Accept: application/json
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "customerName": "Nguyen Van A",
+  "content": "The Samsung Galaxy S25 has an excellent camera, fast performance and beautiful display. I am very satisfied with this phone.",
+  "rating": 5
+}
+
+
+### Test AI Assistant Chat
+# @timeout 120000
+POST {{SmartShopAI_HostAddress}}/api/assistant/chat
+Accept: application/json
+Content-Type: application/json
+
+{
+  "sessionId": "session001",
+  "message": "Which phone has the best camera?"
+}
+
+
+### Test Review Statistics Report
+GET {{SmartShopAI_HostAddress}}/api/reports/reviews
+Accept: application/json
+
+
